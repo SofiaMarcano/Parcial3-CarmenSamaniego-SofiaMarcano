@@ -12,8 +12,8 @@ class Paciente:
 
     def __str__(self):
         return f"Paciente {self.nombre} (ID: {self.id_paciente}, Edad: {self.edad})"
-    def getImagen(self):
-        return self.imagen_3d
+    # def getImagen(self):
+    #     return self.imagen_3d
 class DICOMC:
     def __init__(self, carpeta):
         self.carpeta = carpeta
@@ -36,8 +36,10 @@ class DICOMC:
             id_paciente = self.meta_info.get('PatientID', '0000')
             return str(nombre), int(edad[:-1]), str(id_paciente)
         return "Anonimo", 0, "0000"
-    def traslacion(self,imagen, valor):
+    def traslacion(self, valor):
         print(im.shape)
+        tx = 0
+        ty = 0
         if valor == "1":
             tx = 30
             ty = 0
@@ -50,14 +52,21 @@ class DICOMC:
         elif valor == "4":
             tx = 0
             ty = 40
-            
+        else:
+            tx = 0
+            ty = 0
+        corte= pydicom.dcmread(r"datosDICOM\000000.dcm")
+        imagen = corte.pixel_array
+
         MT = np.float32([[1, 0, tx], [0, 1, ty]])
-        row, col, chn=np.shape(imagen)
+        row,col= imagen.shape
         #Traslación
         tras = cv2.warpAffine(imagen,MT,(col,row))
-        plt.imshow(tras)
-        plt.axis('off')
-        print("ya")
+
+        plt.imshow(tras, cmap=plt.cm.bone)
+        plt.show()
+        
+        
             
             # print("\nValores de traslación predefinidos:")
             # print("1. Traslación derecha (30, 0)")
@@ -66,7 +75,8 @@ class DICOMC:
             # print("4. Traslación vertical (0, 40)")
 
 d = DICOMC("datosDICOM")
-d.cargar_dicom_y_reconstruir()
-d.obt_info()
-im = d.getImagen()
-d.traslacion(im,1)
+im = d.cargar_dicom_y_reconstruir()
+n, e, i = d.obt_info()
+p = Paciente(n, e, i, im)
+# im = p.getImagen()
+d.traslacion(1)
