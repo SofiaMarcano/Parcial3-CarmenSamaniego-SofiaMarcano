@@ -3,6 +3,7 @@ import numpy as np
 import os
 import matplotlib.pyplot as plt
 import cv2
+import random
 class Paciente:
     def __init__(self, nombre, edad, id_paciente, imagen_3d):
         self.nombre = nombre
@@ -118,7 +119,8 @@ class DICOMC:
             plt.title('Trasladada')
             plt.show() 
             tras_guardar = cv2.normalize(tras, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8)
-            cv2.imwrite(f"datosDICOM/corte_{c}_trasladado.png",tras_guardar)
+            numero = random.randint(100, 999)
+            cv2.imwrite(f"datosDICOM/corte_{c}_trasladado_{numero}.png",tras_guardar)
             plt.close()
         except:
             print("No eligió un corte valido")

@@ -137,6 +137,30 @@ def proc_imagen():
     nombre_g = f"procesada_{clave}.png"
     cv2.imwrite(nombre_g, anotada)
     print(f"Imagen final guardada como: {nombre_g}")
+
+def listar_cortes_dicom():
+    print("Cortes DICOM disponibles:")
+    ruta = "datosDICOM"
+    
+    if not os.path.exists(ruta):
+        print("La carpeta no existe.")
+        return
+    
+    archivos = sorted([f for f in os.listdir(ruta) if f.lower().endswith('.dcm')], 
+                     key=lambda x: int(''.join(filter(str.isdigit, x)) or 0))
+    
+    
+    if not archivos:
+        print("No se encontraron archivos DICOM (.dcm) en la carpeta.")
+        return
+    
+    for i, archivo in enumerate(archivos, 1):
+        print(f"{i}. {archivo}")
+    corte=input("Elija el corte: ")
+    archivo_seleccionado = archivos[int(corte)-1]
+    print(f"\nSeleccionado: {archivo_seleccionado}")
+    return archivo_seleccionado
+
 def main():
     while True:
         print('''###MENU###
@@ -146,7 +170,7 @@ def main():
                 4. Trasladar imagen y guardar
                 5. Binarización, transformacion y dibujo de imagen
                 6. Salir''')
-        menu=rev_num("SEleccione una opcion 🦜")
+        menu=rev_num("Seleccione una opcion 🦜")
         if menu==1:
             proc_dicom()
         elif menu==2:
@@ -154,24 +178,15 @@ def main():
         elif menu==3:
             ingresar_imagen()
         elif menu==4:
-            print("Cortes disponibles: ")
-            ruta = "datosDICOM"
-            if os.path.exists(ruta):
-                archivos = os.listdir(ruta)
-                for archivo in archivos:
-                    print(archivo) 
-            else:
-                print("La carpeta no existe.")
-            corte=input("Elija el corte: ")
+            
+            corte=listar_cortes_dicom()
+            
             print("\nValores de traslación predefinidos:")
             print("1. Traslación derecha (300, 0)")
             print("2. Traslación izquierda (-300, 0)")
             print("3. Traslación diagonal (300, 300)")
             print("4. Traslación vertical (0, 400)")
             d = Clases.DICOMC("datosDICOM")
-            im = d.cargar_dicom_y_reconstruir()
-            n, e, i = d.obt_info()
-            p = Clases.Paciente(n, e, i, im)
             d.traslacion(input("Ingrese la traslación que quiera: "), corte)
         elif menu==5:
             proc_imagen()
