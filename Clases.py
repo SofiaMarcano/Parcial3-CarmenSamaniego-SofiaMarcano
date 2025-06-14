@@ -1,6 +1,7 @@
 import pydicom
 import numpy as np
 import os
+import matplotlib.pyplot as plt
 import cv2
 class Paciente:
     def __init__(self, nombre, edad, id_paciente, imagen_3d):
@@ -11,6 +12,8 @@ class Paciente:
 
     def __str__(self):
         return f"Paciente {self.nombre} (ID: {self.id_paciente}, Edad: {self.edad})"
+    def getImagen(self):
+        return self.imagen_3d
 class DICOMC:
     def __init__(self, carpeta):
         self.carpeta = carpeta
@@ -34,21 +37,36 @@ class DICOMC:
             return str(nombre), int(edad[:-1]), str(id_paciente)
         return "Anonimo", 0, "0000"
     def traslacion(self,imagen, valor):
+        print(im.shape)
         if valor == "1":
-            im = valor[:,:20]
-            row,col= im.shape
+            tx = 30
+            ty = 0
+        elif valor == "2":
+            tx = -30
+            ty = 0
+        elif valor == "3":
+            tx = 50
+            ty = 50
+        elif valor == "4":
+            tx = 0
+            ty = 40
+            
+        MT = np.float32([[1, 0, tx], [0, 1, ty]])
+        row, col, chn=np.shape(imagen)
+        #Traslación
+        tras = cv2.warpAffine(imagen,MT,(col,row))
+        plt.imshow(tras)
+        plt.axis('off')
+        print("ya")
+            
             # print("\nValores de traslación predefinidos:")
             # print("1. Traslación derecha (30, 0)")
             # print("2. Traslación izquierda (-30, 0)")
             # print("3. Traslación diagonal (50, 50)")
             # print("4. Traslación vertical (0, 40)")
-            # MR = cv2.getRotationMatrix2D((col/2,row/2),45,1)
-            # img=ds.pixel_array# row, col, chn=np.shape(img)
 
-            # #Rotación
-            # rot = cv2.warpAffine(img,MR,(col,row))
-
-            # print ('Tamanho ', np.shape(rot))
-            # plt.imshow(rot)
-            # plt.axis('off')
-    
+d = DICOMC("datosDICOM")
+d.cargar_dicom_y_reconstruir()
+d.obt_info()
+im = d.getImagen()
+d.traslacion(im,1)
