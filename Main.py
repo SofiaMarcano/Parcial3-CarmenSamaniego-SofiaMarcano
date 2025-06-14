@@ -135,7 +135,7 @@ def proc_imagen():
     # Guardar
     nombre_g = f"procesada_{clave}.png"
     cv2.imwrite(nombre_g, anotada)
-    print(f"✅ Imagen final guardada como: {nombre_g}")
+    print(f"Imagen final guardada como: {nombre_g}")
 def main():
     while True:
         print('''###MENU###
@@ -145,7 +145,7 @@ def main():
                 4. Trasladar imagen y guardar
                 5. Binarización, transformacion y dibujo de imagen
                 6. Salir''')
-        menu=rev_num("SEleccione una opcion")
+        menu=rev_num("SEleccione una opcion 🦜🐱")
         if menu==1:
             proc_dicom()
         elif menu==2:
