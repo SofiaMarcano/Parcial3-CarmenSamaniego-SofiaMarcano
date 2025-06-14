@@ -11,10 +11,8 @@ def rev_num(msj):
         except ValueError:
             print("Ingrese un numero entero")
 
-#Clave: ingresada por el usuario, valor: objeto DICOM
 archivos= {}
 
-#procesar dicom
 def proc_dicom():
     clave = input("Ingrese una clave única para este conjunto DICOM (ej. paciente1): ")
     if clave in archivos:
@@ -37,10 +35,8 @@ def proc_dicom():
     except Exception as e:
         print("Error procesando el DICOM:", e)
 
-# Diccionario global para pacientes
 pacientes={}
 
-#crear paciente
 def create_paciente():
     if not archivos:
         print("No hay archivos DICOM procesados.")
@@ -195,29 +191,26 @@ def main():
             claves = [k for k, v in archivos.items() if isinstance(v, Clases.DICOMC)]
             if not claves:
                 print("No hay imágenes .dcm cargadas.")
-                return
-            print("\nImágenes disponibles:")
-            for i, clave in enumerate(claves):
-                print(f"{i + 1}. {clave}")
-            indice = rev_num("Ingrese el número que quiere usar: ") - 1
-            if indice < 0 or indice >= len(claves):
-                print("Índice inválido.")
-                return
-            clave = claves[indice]
-            dicom_obj = archivos[clave]
-            # corte = listar_cortes_dicom(dicom_obj.carpeta)
-            try:
+            else:
+                print("\nImágenes disponibles:")
+                for i, clave in enumerate(claves):
+                    print(f"{i + 1}. {clave}")
+                indice = rev_num("Ingrese el número que quiere usar: ") - 1
+                if indice < 0 or indice >= len(claves):
+                    print("Índice inválido.")
+                    return
+                clave = claves[indice]
+                dicom_obj = archivos[clave]
+                # corte = listar_cortes_dicom(dicom_obj.carpeta)
                 vol = dicom_obj.volumen
                 print("\nValores de traslación predefinidos:")
                 print("1. Traslación derecha (300, 0)")
                 print("2. Traslación izquierda (-300, 0)")
-                print("3. Traslación diagonal (300, 300)")
-                print("4. Traslación vertical (0, 400)")
+                print("3. Traslación diagonal (300, -300)")
+                print("4. Traslación vertical (0, -400)")
                 d = Clases.DICOMC("datosDICOM")
-                d.traslacion(input("Ingrese la traslación que quiera: "), vol)
-            except:
-                print("No tiene volumen")
-            
+                d.traslacion(input("Ingrese la traslación que quiera: "), vol, int(input("Corte (número): ")))
+                
             
         elif menu==5:
             proc_imagen()
