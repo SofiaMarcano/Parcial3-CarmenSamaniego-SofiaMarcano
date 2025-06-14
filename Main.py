@@ -191,7 +191,12 @@ def main():
         elif menu==4:
 
             print("\nClaves disponibles:")
-            claves = list(archivos.keys())
+            # claves = list(archivos.keys())
+            claves = [k for k, v in archivos.items() if isinstance(v, Clases.DICOMC)]
+            if not claves:
+                print("No hay imágenes .dcm cargadas.")
+                return
+            print("\nImágenes disponibles:")
             for i, clave in enumerate(claves):
                 print(f"{i + 1}. {clave}")
             indice = rev_num("Ingrese el número que quiere usar: ") - 1
