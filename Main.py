@@ -52,7 +52,7 @@ def create_paciente():
     claves = list(diccionario_archivos.keys())
     for i, clave in enumerate(claves):
         print(f"{i + 1}. {clave}")
-    indice = rev_num("Ingrese el número del DICOM que quiere usar para crear el paciente: ")) - 1
+    indice = rev_num("Ingrese el número del DICOM que quiere usar para crear el paciente: ") - 1
     if indice < 0 or indice >= len(claves):
         print("Índice inválido.")
         return
