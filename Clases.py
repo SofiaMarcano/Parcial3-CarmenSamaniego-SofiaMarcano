@@ -1,6 +1,7 @@
 import pydicom
 import numpy as np
 import os
+import matplotlib.pyplot as plt
 import cv2
 class Paciente:
     def __init__(self, nombre, edad, id_paciente, imagen_3d):
@@ -11,6 +12,8 @@ class Paciente:
 
     def __str__(self):
         return f"Paciente {self.nombre} (ID: {self.id_paciente}, Edad: {self.edad})"
+    # def getImagen(self):
+    #     return self.imagen_3d
 class DICOMC:
     def __init__(self, carpeta):
         self.carpeta = carpeta
@@ -33,17 +36,43 @@ class DICOMC:
             id_paciente = self.meta_info.get('PatientID', '0000')
             return str(nombre), int(edad[:-1]), str(id_paciente)
         return "Anonimo", 0, "0000"
-    def traslacion(self,imagen, valor):
+    def traslacion(self, valor):
+        print(im.shape)
+        tx = 0
+        ty = 0
         if valor == "1":
-            im = valor[:,:20]
-            row,col= im.shape
+            tx = 30
+            ty = 0
+        elif valor == "2":
+            tx = -30
+            ty = 0
+        elif valor == "3":
+            tx = 50
+            ty = 50
+        elif valor == "4":
+            tx = 0
+            ty = 40
+        else:
+            tx = 0
+            ty = 0
+        corte= pydicom.dcmread(r"datosDICOM\000000.dcm")
+        imagen = corte.pixel_array
+
+        MT = np.float32([[1, 0, tx], [0, 1, ty]])
+        row,col= imagen.shape
+        #Traslación
+        tras = cv2.warpAffine(imagen,MT,(col,row))
+
+        plt.imshow(tras, cmap=plt.cm.bone)
+        plt.show() 
+        
+        
+            
             # print("\nValores de traslación predefinidos:")
             # print("1. Traslación derecha (30, 0)")
             # print("2. Traslación izquierda (-30, 0)")
             # print("3. Traslación diagonal (50, 50)")
             # print("4. Traslación vertical (0, 40)")
-            # MR = cv2.getRotationMatrix2D((col/2,row/2),45,1)
-            # img=ds.pixel_array# row, col, chn=np.shape(img)
 
             # #Rotación
             # rot = cv2.warpAffine(img,MR,(col,row))
@@ -92,3 +121,9 @@ class ImagenHandler:
         return anotada
 
 
+d = DICOMC("datosDICOM")
+im = d.cargar_dicom_y_reconstruir()
+n, e, i = d.obt_info()
+p = Paciente(n, e, i, im)
+# im = p.getImagen()
+d.traslacion(1)
