@@ -84,56 +84,47 @@ class DICOMC:
             id_paciente = self.meta_info.get('PatientID', '0000')
             return str(nombre), int(edad[:-1]), str(id_paciente)
         return "Anonimo", 0, "0000"
-    def traslacion(self, valor):
-        tx = 0
-        ty = 0
-        if valor == 1:
+    def traslacion(self, valor,c):
+        if valor == "1":
             tx = 300
             ty = 0
-        elif valor == 2:
+        elif valor == "2":
             tx = -300
             ty = 0
-        elif valor ==3:
-            tx = 500
-            ty = 500
-        elif valor == 4:
+        elif valor == "3":
+            tx = 300
+            ty = 300
+        elif valor == "4":
             tx = 0
             ty = 400
         else:
             tx = 0
             ty = 0
             print(valor)
-        corte= pydicom.dcmread(r"datosDICOM\000000.dcm")
-        imagen = corte.pixel_array
+        try:
+            corte= pydicom.dcmread(f"datosDICOM/{c}")
+            imagen = corte.pixel_array
+            MT = np.float32([[1, 0, tx], [0, 1, ty]])
+            row,col= imagen.shape
+            #Traslación
+            tras = cv2.warpAffine(imagen,MT,(col,row))
 
-        MT = np.float32([[1, 0, tx], [0, 1, ty]])
-        row,col= imagen.shape
-        #Traslación
-        tras = cv2.warpAffine(imagen,MT,(col,row))
-
-        plt.imshow(tras, cmap=plt.cm.bone)
-        plt.show() 
+            plt.figure(figsize=(15,8))
+            plt.subplot(1,2,1)
+            plt.imshow(imagen, cmap=plt.cm.bone)
+            plt.title('Original')
+            plt.subplot(1,2,2)
+            plt.imshow(tras, cmap=plt.cm.bone)
+            plt.title('Trasladada')
+            plt.show() 
+            tras_guardar = cv2.normalize(tras, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8)
+            cv2.imwrite(f"datosDICOM/corte_{c}_trasladado.png",tras_guardar)
+            plt.close()
+        except:
+            print("No eligió un corte valido")
         
         
-            
-            # print("\nValores de traslación predefinidos:")
-            # print("1. Traslación derecha (30, 0)")
-            # print("2. Traslación izquierda (-30, 0)")
-            # print("3. Traslación diagonal (50, 50)")
-            # print("4. Traslación vertical (0, 40)")
-
-            # #Rotación
-            # rot = cv2.warpAffine(img,MR,(col,row))
-
-            # print ('Tamanho ', np.shape(rot))
-            # plt.imshow(rot)
-            # plt.axis('off')
-
-
-import cv2
-import numpy as np
-
-class ImagenM:
+class ImagenHandler:
     def __init__(self, ruta):
         self.ruta = ruta
         self.imagen = cv2.imread(ruta)
@@ -198,9 +189,5 @@ class ImagenM:
                         2,
                         cv2.LINE_AA)
         return anotada
-d = DICOMC("datosDICOM")
-im = d.cargar_dicom_y_reconstruir()
-n, e, i = d.obt_info()
-p = Paciente(n, e, i, im)
-# im = p.getImagen()
-d.traslacion(1)
+
+

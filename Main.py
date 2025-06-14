@@ -154,7 +154,25 @@ def main():
         elif menu==3:
             ingresar_imagen()
         elif menu==4:
-            trasladar_dicom()
+            print("Cortes disponibles: ")
+            ruta = "datosDICOM"
+            if os.path.exists(ruta):
+                archivos = os.listdir(ruta)
+                for archivo in archivos:
+                    print(archivo)
+            else:
+                print("La carpeta no existe.")
+            corte=input("Elija el corte: ")
+            print("\nValores de traslación predefinidos:")
+            print("1. Traslación derecha (300, 0)")
+            print("2. Traslación izquierda (-300, 0)")
+            print("3. Traslación diagonal (300, 300)")
+            print("4. Traslación vertical (0, 400)")
+            d = Clases.DICOMC("datosDICOM")
+            im = d.cargar_dicom_y_reconstruir()
+            n, e, i = d.obt_info()
+            p = Clases.Paciente(n, e, i, im)
+            d.traslacion(input("Ingrese la traslación que quiera: "), corte)
         elif menu==5:
             proc_imagen()
         elif menu==6:
