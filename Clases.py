@@ -37,24 +37,24 @@ class DICOMC:
             return str(nombre), int(edad[:-1]), str(id_paciente)
         return "Anonimo", 0, "0000"
     def traslacion(self, valor):
-        print(im.shape)
         tx = 0
         ty = 0
-        if valor == "1":
-            tx = 30
+        if valor == 1:
+            tx = 300
             ty = 0
-        elif valor == "2":
-            tx = -30
+        elif valor == 2:
+            tx = -300
             ty = 0
-        elif valor == "3":
-            tx = 50
-            ty = 50
-        elif valor == "4":
+        elif valor ==3:
+            tx = 500
+            ty = 500
+        elif valor == 4:
             tx = 0
-            ty = 40
+            ty = 400
         else:
             tx = 0
             ty = 0
+            print(valor)
         corte= pydicom.dcmread(r"datosDICOM\000000.dcm")
         imagen = corte.pixel_array
 
