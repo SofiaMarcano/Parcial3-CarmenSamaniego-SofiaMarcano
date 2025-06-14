@@ -88,6 +88,7 @@ class DICOMC:
             id_paciente = self.meta_info.get('PatientID', '0000')
             return str(nombre), int(edad[:-1]), str(id_paciente)
         return "Anonimo", 0, "0000"
+    
     def traslacion(self, valor,c):
         if valor == "1":
             tx = 300
@@ -104,10 +105,11 @@ class DICOMC:
         else:
             tx = 0
             ty = 0
-            print(valor)
+            print("No eligió bien, no se traslada")
         try:
-            corte= pydicom.dcmread(f"datosDICOM/{c}")
-            imagen = corte.pixel_array
+            # corte= pydicom.dcmread(f"datosDICOM/{c}")
+            # imagen = c.pixel_array
+            imagen = c[20,:,:]
             MT = np.float32([[1, 0, tx], [0, 1, ty]])
             row,col= imagen.shape
             #Traslación

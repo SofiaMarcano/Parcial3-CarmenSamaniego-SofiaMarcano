@@ -2,6 +2,7 @@ import os
 import Clases
 import cv2
 import matplotlib.pyplot as plt
+
 def rev_num(msj):
     while True:
         try:
@@ -9,7 +10,11 @@ def rev_num(msj):
             return x
         except ValueError:
             print("Ingrese un numero entero")
+
+#Clave: ingresada por el usuario, valor: objeto DICOM
 archivos= {}
+
+#procesar dicom
 def proc_dicom():
     clave = input("Ingrese una clave única para este conjunto DICOM (ej. paciente1): ")
     if clave in archivos:
@@ -31,8 +36,11 @@ def proc_dicom():
             print("No se pudo reconstruir el volumen.")
     except Exception as e:
         print("Error procesando el DICOM:", e)
+
 # Diccionario global para pacientes
 pacientes={}
+
+#crear paciente
 def create_paciente():
     if not archivos:
         print("No hay archivos DICOM procesados.")
@@ -57,6 +65,8 @@ def create_paciente():
     paciente = Clases.Paciente(nombre, edad, id_paciente, volumen)
     pacientes[clave] = paciente
     print(f"Paciente '{nombre}' creado y almacenado con clave '{clave}'")
+
+#imagen jpg y png
 def ingresar_imagen():
     clave = input("Ingrese una clave única para la imagen (ej. lesion1): ")
     if clave in archivos:
@@ -72,6 +82,7 @@ def ingresar_imagen():
         print(f"Imagen cargada y almacenada con clave '{clave}'")
     except Exception as e:
         print("No se pudo cargar la imagen:", e)
+
 def proc_imagen():
     claves = [k for k, v in archivos.items() if isinstance(v, Clases.ImagenM)]
     if not claves:
@@ -138,28 +149,28 @@ def proc_imagen():
     cv2.imwrite(nombre_g, anotada)
     print(f"Imagen final guardada como: {nombre_g}")
 
-def listar_cortes_dicom():
-    print("Cortes DICOM disponibles:")
-    ruta = "datosDICOM"
+# def listar_cortes_dicom(carpeta):
+#     print("Cortes DICOM disponibles:")
+#     ruta = carpeta
     
-    if not os.path.exists(ruta):
-        print("La carpeta no existe.")
-        return
+#     if not os.path.exists(ruta):
+#         print("La carpeta no existe.")
+#         return
     
-    archivos = sorted([f for f in os.listdir(ruta) if f.lower().endswith('.dcm')], 
-                     key=lambda x: int(''.join(filter(str.isdigit, x)) or 0))
+#     archivos = sorted([f for f in os.listdir(ruta) if f.lower().endswith('.dcm')], 
+#                      key=lambda x: int(''.join(filter(str.isdigit, x)) or 0))
     
     
-    if not archivos:
-        print("No se encontraron archivos DICOM (.dcm) en la carpeta.")
-        return
+    # if not archivos:
+    #     print("No se encontraron archivos DICOM (.dcm) en la carpeta.")
+    #     return
     
-    for i, archivo in enumerate(archivos, 1):
-        print(f"{i}. {archivo}")
-    corte=input("Elija el corte: ")
-    archivo_seleccionado = archivos[int(corte)-1]
-    print(f"\nSeleccionado: {archivo_seleccionado}")
-    return archivo_seleccionado
+    # for i, archivo in enumerate(archivos, 1):
+    #     print(f"{i}. {archivo}")
+    # corte=input("Elija el corte: ")
+    # archivo_seleccionado = archivos[int(corte)-1]
+    # print(f"\nSeleccionado: {archivo_seleccionado}")
+    # return archivo_seleccionado
 
 def main():
     while True:
@@ -170,7 +181,7 @@ def main():
                 4. Trasladar imagen y guardar
                 5. Binarización, transformacion y dibujo de imagen
                 6. Salir''')
-        menu=rev_num("Seleccione una opcion 🦜")
+        menu=rev_num("Seleccione una opcion 🦜😺 ")
         if menu==1:
             proc_dicom()
         elif menu==2:
@@ -178,8 +189,22 @@ def main():
         elif menu==3:
             ingresar_imagen()
         elif menu==4:
-            
-            corte=listar_cortes_dicom()
+
+            print("\nClaves disponibles:")
+            claves = list(archivos.keys())
+            for i, clave in enumerate(claves):
+                print(f"{i + 1}. {clave}")
+            indice = rev_num("Ingrese el número que quiere usar: ") - 1
+            if indice < 0 or indice >= len(claves):
+                print("Índice inválido.")
+                return
+            clave = claves[indice]
+            dicom_obj = archivos[clave]
+            # corte = listar_cortes_dicom(dicom_obj.carpeta)
+            try:
+                vol = dicom_obj.volumen
+            except:
+                print("No tiene volumen")
             
             print("\nValores de traslación predefinidos:")
             print("1. Traslación derecha (300, 0)")
@@ -187,7 +212,7 @@ def main():
             print("3. Traslación diagonal (300, 300)")
             print("4. Traslación vertical (0, 400)")
             d = Clases.DICOMC("datosDICOM")
-            d.traslacion(input("Ingrese la traslación que quiera: "), corte)
+            d.traslacion(input("Ingrese la traslación que quiera: "), vol)
         elif menu==5:
             proc_imagen()
         elif menu==6:
