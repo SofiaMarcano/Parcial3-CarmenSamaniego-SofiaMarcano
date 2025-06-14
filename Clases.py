@@ -64,7 +64,7 @@ class DICOMC:
         tras = cv2.warpAffine(imagen,MT,(col,row))
 
         plt.imshow(tras, cmap=plt.cm.bone)
-        plt.show()
+        plt.show() 
         
         
             
