@@ -124,7 +124,7 @@ class DICOMC:
             print("No eligió un corte valido")
         
         
-class ImagenHandler:
+class ImagenM:
     def __init__(self, ruta):
         self.ruta = ruta
         self.imagen = cv2.imread(ruta)
