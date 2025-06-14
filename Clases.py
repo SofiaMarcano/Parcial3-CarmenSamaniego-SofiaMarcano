@@ -20,15 +20,63 @@ class DICOMC:
         self.volumen = None
         self.meta_info = None
     def cargar_dicom_y_reconstruir(self):
-        arc = sorted([os.path.join(self.carpeta, f) for f in os.listdir(self.carpeta) if f.endswith(".dcm")])
-        imagenes = []
-        for i in arc:
-            ds = pydicom.dcmread(i)
-            imagenes.append(ds.pixel_array)
-            if self.meta_info is None:
-                self.meta_info = ds  # Guardamos un solo archivo con metadata
+        archivos = sorted([
+            os.path.join(self.carpeta, f) for f in os.listdir(self.carpeta)
+            if f.lower().endswith('.dcm')
+        ])
+        if not archivos:
+            print("❌ No se encontraron archivos DICOM en la carpeta.")
+            return None
+
+        # Leer todos los archivos con metadata
+        slices = []
+        for f in archivos:
+            ds = pydicom.dcmread(f)
+            if hasattr(ds, 'ImagePositionPatient'):
+                z = float(ds.ImagePositionPatient[2])
+            elif hasattr(ds, 'SliceLocation'):
+                z = float(ds.SliceLocation)
+            else:
+                print(f"⚠️ Archivo sin coordenada Z: {f}")
+                continue
+            slices.append((z, ds))
+
+        # Ordenar por coordenada Z
+        slices.sort(key=lambda x: x[0])
+        imagenes = [ds.pixel_array for (_, ds) in slices]
+
+        if not imagenes:
+            print("❌ No se pudieron leer imágenes válidas.")
+            return None
+
+        self.meta_info = slices[0][1]
         self.volumen = np.stack(imagenes, axis=0)
         return self.volumen
+
+    def see_cortes(self):
+        medio_z = self.volumen.shape[0] // 2
+        medio_y = self.volumen.shape[1] // 2
+        medio_x = self.volumen.shape[2] // 2
+
+        corte_transversal = self.volumen[medio_z, :, :]
+        corte_coronal = self.volumen[:, medio_y, :]
+        corte_sagital = self.volumen[:, :, medio_x]
+
+        fig, axes = plt.subplots(1, 3, figsize=(15, 5))
+        axes[0].imshow(corte_transversal, cmap='gray')
+        axes[0].set_title("Corte Transversal")
+        axes[0].axis('off')
+
+        axes[1].imshow(corte_coronal, cmap='gray', aspect='auto')
+        axes[1].set_title("Corte Coronal")
+        axes[1].axis('off')
+
+        axes[2].imshow(corte_sagital, cmap='gray', aspect='auto')
+        axes[2].set_title("Corte Sagital")
+        axes[2].axis('off')
+
+        plt.tight_layout()
+        return plt.show()
     def obt_info(self):
         if self.meta_info:
             nombre = self.meta_info.get('PatientName', 'Desconocido')
