@@ -158,7 +158,7 @@ def main():
             if os.path.exists(ruta):
                 archivos = os.listdir(ruta)
                 for archivo in archivos:
-                    print(archivo)
+                    print(archivo) 
             else:
                 print("La carpeta no existe.")
             corte=input("Elija el corte: ")
