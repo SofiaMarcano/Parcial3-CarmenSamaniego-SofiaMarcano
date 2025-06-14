@@ -82,6 +82,9 @@ class DICOMC:
             # plt.axis('off')
 
 
+import cv2
+import numpy as np
+
 class ImagenM:
     def __init__(self, ruta):
         self.ruta = ruta
@@ -97,28 +100,58 @@ class ImagenM:
             4: cv2.THRESH_TOZERO,
             5: cv2.THRESH_TOZERO_INV
         }
-        tipo_cv = tipos.get(tipo)
-        _, resultado = cv2.threshold(cv2.cvtColor(self.imagen, cv2.COLOR_BGR2GRAY), umbral, max_val, tipo_cv)
-        return resultado
+        tipo_cv = tipos.get(tipo, cv2.THRESH_BINARY)
+        gris = cv2.cvtColor(self.imagen, cv2.COLOR_BGR2GRAY)
+        _, binarizada = cv2.threshold(gris, umbral, max_val, tipo_cv)
+        # Normalización opcional para visualización
+        return cv2.normalize(binarizada, None, 0, 255, cv2.NORM_MINMAX)
 
     def trans_morfo(self, imagen_bin, tipo='open', kernel_size=5):
         ope = {
             1: cv2.MORPH_OPEN,
             2: cv2.MORPH_CLOSE,
             3: cv2.MORPH_DILATE,
-            4: cv2.MORPH_ERODE
+            4: cv2.MORPH_ERODE,
         }
+        operacion = ope.get(tipo, cv2.MORPH_OPEN)
         kernel = cv2.getStructuringElement(cv2.MORPH_RECT, (kernel_size, kernel_size))
-        return cv2.morphologyEx(imagen_bin, ope.get(tipo), kernel)
+        procesada = cv2.morphologyEx(imagen_bin, operacion, kernel)
+        return cv2.normalize(procesada, None, 0, 255, cv2.NORM_MINMAX)
 
-    def anotar_imagen(self, imagen, texto, forma='rect', pos=(50, 50), tamaño=50):
-        anotada = cv2.cvtColor(imagen, cv2.COLOR_GRAY2BGR)
+    def anotar_imagen(self, imagen, texto, forma=1):
+        if len(imagen.shape) == 2:
+            anotada = cv2.cvtColor(imagen, cv2.COLOR_GRAY2BGR)
+        else:
+            anotada = imagen.copy()
+
+        alto, ancho = anotada.shape[:2]
+        tamaño = min(alto, ancho) // 5
+        x = ancho // 20
+        y = alto // 10
+
+        color_figura = (0, 255, 0) if forma == 2 else (255, 0, 0)
+        color_texto = (0, 255, 255)
+        grosor = 2
+
         if forma == 1:
-            cv2.rectangle(anotada, pos, (pos[0] + tamaño, pos[1] + tamaño), (255, 0, 0), 2)
+            cv2.rectangle(anotada, (x, y), (x + tamaño, y + tamaño), color_figura, grosor)
+            pos_texto = (x + 10, y + tamaño // 2)
         elif forma == 2:
-            cv2.circle(anotada, pos, tamaño, (0, 255, 0), 2)
-        cv2.putText(anotada, texto, (pos[0], pos[1] - 10), cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 0, 255), 1)
+            centro = (x + tamaño // 2, y + tamaño // 2)
+            cv2.circle(anotada, centro, tamaño // 2, color_figura, grosor)
+            pos_texto = (x + 10, y + tamaño // 2)
+
+        for i, linea in enumerate(texto.split("\n")):
+            cv2.putText(anotada, linea,
+                        (pos_texto[0], pos_texto[1] + i * 22),
+                        cv2.FONT_HERSHEY_SIMPLEX,
+                        0.6,
+                        color_texto,
+                        2,
+                        cv2.LINE_AA)
         return anotada
+
+
 
 
 d = DICOMC("datosDICOM")
