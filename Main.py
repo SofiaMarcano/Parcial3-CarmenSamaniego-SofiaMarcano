@@ -203,16 +203,17 @@ def main():
             # corte = listar_cortes_dicom(dicom_obj.carpeta)
             try:
                 vol = dicom_obj.volumen
+                print("\nValores de traslación predefinidos:")
+                print("1. Traslación derecha (300, 0)")
+                print("2. Traslación izquierda (-300, 0)")
+                print("3. Traslación diagonal (300, 300)")
+                print("4. Traslación vertical (0, 400)")
+                d = Clases.DICOMC("datosDICOM")
+                d.traslacion(input("Ingrese la traslación que quiera: "), vol)
             except:
                 print("No tiene volumen")
             
-            print("\nValores de traslación predefinidos:")
-            print("1. Traslación derecha (300, 0)")
-            print("2. Traslación izquierda (-300, 0)")
-            print("3. Traslación diagonal (300, 300)")
-            print("4. Traslación vertical (0, 400)")
-            d = Clases.DICOMC("datosDICOM")
-            d.traslacion(input("Ingrese la traslación que quiera: "), vol)
+            
         elif menu==5:
             proc_imagen()
         elif menu==6:

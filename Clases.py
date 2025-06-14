@@ -80,6 +80,7 @@ class DICOMC:
         ruta_salida = os.path.join(os.getcwd(), self.carpeta)
         plt.savefig(ruta_salida, dpi=300)
         print(f"Imagen guardada en: {ruta_salida}")
+        plt.show()
 
     def obt_info(self):
         if self.meta_info:
@@ -110,6 +111,7 @@ class DICOMC:
             # corte= pydicom.dcmread(f"datosDICOM/{c}")
             # imagen = c.pixel_array
             imagen = c[20,:,:]
+            print("Corte 20 transversal")
             MT = np.float32([[1, 0, tx], [0, 1, ty]])
             row,col= imagen.shape
             #Traslación
@@ -125,7 +127,7 @@ class DICOMC:
             plt.show() 
             tras_guardar = cv2.normalize(tras, None, 0, 255, cv2.NORM_MINMAX).astype(np.uint8)
             numero = random.randint(100, 999)
-            cv2.imwrite(f"datosDICOM/corte_{c}_trasladado_{numero}.png",tras_guardar)
+            cv2.imwrite(f"datosDICOM/corte_trasladado_{numero}.png",tras_guardar)
             plt.close()
         except:
             print("No eligió un corte valido")
