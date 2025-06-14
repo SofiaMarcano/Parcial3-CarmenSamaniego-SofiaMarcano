@@ -1,3 +1,6 @@
+#Integrantes: Sofia Marcano y Carmen Samaniego
+#Link de Github: https://github.com/SofiaMarcano/Parcial3-CarmenSamaniego-SofiaMarcano.git
+
 import os
 import Clases
 import cv2
