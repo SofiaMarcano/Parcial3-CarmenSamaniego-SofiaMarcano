@@ -76,6 +76,9 @@ class DICOMC:
         axes[2].axis('off')
 
         plt.tight_layout()
+        ruta_salida = os.path.join(os.getcwd(), self.carpeta)
+        plt.savefig(ruta_salida, dpi=300)
+        print(f"✅ Imagen guardada en: {ruta_salida}")
         return plt.show()
     def obt_info(self):
         if self.meta_info:
