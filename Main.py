@@ -26,6 +26,7 @@ def proc_dicom():
             archivos[clave] = dicom_obj
             print(f"DICOM procesado y guardado con clave '{clave}'")
             print(f"Dimensiones del volumen reconstruido: {volumen.shape}")
+            dicom_obj.see_cortes() 
         else:
             print("No se pudo reconstruir el volumen.")
     except Exception as e:
@@ -145,7 +146,7 @@ def main():
                 4. Trasladar imagen y guardar
                 5. Binarización, transformacion y dibujo de imagen
                 6. Salir''')
-        menu=rev_num("SEleccione una opcion 🦜🐱")
+        menu=rev_num("SEleccione una opcion 🦜")
         if menu==1:
             proc_dicom()
         elif menu==2:
