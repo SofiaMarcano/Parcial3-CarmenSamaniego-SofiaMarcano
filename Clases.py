@@ -51,9 +51,7 @@ class DICOMC:
             # print ('Tamanho ', np.shape(rot))
             # plt.imshow(rot)
             # plt.axis('off')
-    
-    import cv2
-import cv2
+
 
 class ImagenHandler:
     def __init__(self, ruta):
