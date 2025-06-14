@@ -82,7 +82,7 @@ class DICOMC:
             # plt.axis('off')
 
 
-class ImagenHandler:
+class ImagenM:
     def __init__(self, ruta):
         self.ruta = ruta
         self.imagen = cv2.imread(ruta)
