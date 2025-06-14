@@ -33,6 +33,22 @@ class DICOMC:
             id_paciente = self.meta_info.get('PatientID', '0000')
             return str(nombre), int(edad[:-1]), str(id_paciente)
         return "Anonimo", 0, "0000"
-    def traslacion(self):
+    def traslacion(self,imagen, valor):
+        if valor == "1":
+            im = valor[:,:20]
+            row,col= im.shape
+            # print("\nValores de traslación predefinidos:")
+            # print("1. Traslación derecha (30, 0)")
+            # print("2. Traslación izquierda (-30, 0)")
+            # print("3. Traslación diagonal (50, 50)")
+            # print("4. Traslación vertical (0, 40)")
+            # MR = cv2.getRotationMatrix2D((col/2,row/2),45,1)
+            # img=ds.pixel_array# row, col, chn=np.shape(img)
 
+            # #Rotación
+            # rot = cv2.warpAffine(img,MR,(col,row))
+
+            # print ('Tamanho ', np.shape(rot))
+            # plt.imshow(rot)
+            # plt.axis('off')
     
