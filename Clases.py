@@ -150,10 +150,6 @@ class ImagenM:
                         2,
                         cv2.LINE_AA)
         return anotada
-
-
-
-
 d = DICOMC("datosDICOM")
 im = d.cargar_dicom_y_reconstruir()
 n, e, i = d.obt_info()
