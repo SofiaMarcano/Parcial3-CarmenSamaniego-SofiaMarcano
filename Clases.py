@@ -1,3 +1,6 @@
+import pydicom
+import numpy as np
+import os
 class Paciente:
     def __init__(self, nombre, edad, id_paciente, imagen_3d):
         self.nombre = nombre
