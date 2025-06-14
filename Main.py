@@ -56,10 +56,9 @@ def create_paciente():
     paciente = Clases.Paciente(nombre, edad, id_paciente, volumen)
     pacientes[clave] = paciente
     print(f"Paciente '{nombre}' creado y almacenado con clave '{clave}'")
-imagenes={}
 def ingresar_imagen():
     clave = input("Ingrese una clave única para la imagen (ej. lesion1): ")
-    if clave in imagenes:
+    if clave in archivos:
         print("Esa clave ya existe. Use otra.")
         return
     ruta = input("Ingrese la ruta al archivo de imagen (.jpg o .png): ")
@@ -68,17 +67,16 @@ def ingresar_imagen():
         return
     try:
         imagen_obj = Clases.ImagenM(ruta)
-        imagenes[clave] = imagen_obj
+        archivos[clave] = imagen_obj
         print(f"Imagen cargada y almacenada con clave '{clave}'")
     except Exception as e:
         print("No se pudo cargar la imagen:", e)
-    
 def proc_imagen():
-    if not imagenes:
-        print("No hay imágenes JPG/PNG cargadas. Use primero la opción c.")
+    claves = [k for k, v in archivos.items() if isinstance(v, Clases.ImagenM)]
+    if not claves:
+        print("No hay imágenes JPG/PNG cargadas.")
         return
     print("\nImágenes disponibles:")
-    claves = list(imagenes.keys())
     for i, clave in enumerate(claves):
         print(f"{i + 1}. {clave}")
     indice = rev_num("Seleccione el número de imagen a procesar: ") - 1
@@ -86,13 +84,7 @@ def proc_imagen():
         print("Índice inválido.")
         return
     clave = claves[indice]
-    imagen_obj = imagenes[clave]
-    print("\n--- ¿Qué desea hacer con la imagen? ---")
-    print("1. Solo binarización")
-    print("2. Solo transformación morfológica")
-    print("3. Solo anotación")
-    print("4. Todo el proceso (binarizar + morfología + anotación)")
-    print("\nTipos de binarización:")
+    imagen_obj = archivos[clave]
     binarios = {
         1: "THRESH_BINARY",
         2: "THRESH_BINARY_INV",
