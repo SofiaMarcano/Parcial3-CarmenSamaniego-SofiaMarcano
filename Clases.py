@@ -1,6 +1,7 @@
 import pydicom
 import numpy as np
 import os
+import cv2
 class Paciente:
     def __init__(self, nombre, edad, id_paciente, imagen_3d):
         self.nombre = nombre
@@ -32,4 +33,6 @@ class DICOMC:
             id_paciente = self.meta_info.get('PatientID', '0000')
             return str(nombre), int(edad[:-1]), str(id_paciente)
         return "Anonimo", 0, "0000"
+    def traslacion(self):
+
     

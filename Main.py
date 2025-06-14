@@ -6,4 +6,3 @@ while True:
                4. Trasladar imagen y guardar
                5. Binarización, transformacion y dibujo de imagen
                6. Salir''')
-    
